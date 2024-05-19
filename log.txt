@@ -19,3 +19,9 @@ create,post,201,5/17/2024 1:20:50 AM
 read,get,201,5/17/2024 1:21:07 AM
 delete,delete,204,5/17/2024 1:21:35 AM
 update,put,200,5/17/2024 1:23:54 AM
+read,get,201,5/19/2024 4:48:12 PM
+read,get,201,5/19/2024 4:52:27 PM
+read,get,200,5/19/2024 5:12:38 PM
+create,post,201,5/19/2024 5:13:12 PM
+update,put,200,5/19/2024 5:13:48 PM
+delete,delete,204,5/19/2024 5:14:02 PM

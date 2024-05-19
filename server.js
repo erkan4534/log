@@ -1,9 +1,30 @@
 const express = require("express");
 const fs = require("fs");
 const app = express();
-const path = require("node:path");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
 
-app.use(express.json()); //json'ni javascript'e çevirir.
+app.use(express.json()); // Gelen JSON verilerini parse eder
+
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Node.js API with Swagger",
+      version: "1.0.0",
+      description: "A simple CRUD API application with Swagger",
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+      },
+    ],
+  },
+  apis: ["./server.js"], // Swagger dokümantasyonu oluşturulacak dosyaların yolu
+};
+
+const specs = swaggerJsdoc(options);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 const filePath = "data.json";
 
@@ -29,18 +50,79 @@ const writeLog = (...logInfo) => {
   });
 };
 
-//read
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       required:
+ *         - id
+ *         - name
+ *         - email
+ *       properties:
+ *         id:
+ *           type: integer
+ *         name:
+ *           type: string
+ *         email:
+ *           type: string
+ */
+
+/**
+ * @swagger
+ * tags:
+ *   name: Users
+ *   description: The users managing API
+ */
+
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     tags: [Users]
+ *     responses:
+ *       200:
+ *         description: A list of users
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/User'
+ */
 app.get("/", (req, res) => {
   try {
     const data = readData();
     res.json(data);
-    writeLog("read", "get", 201);
+    writeLog("read", "get", 200);
   } catch (e) {
-    writeLog("ERROR", 500, e);
+    writeLog("ERROR", "get", 500, e.message);
+    res.status(500).send("Internal Server Error");
   }
 });
 
-//create
+/**
+ * @swagger
+ * /:
+ *   post:
+ *     summary: Create a new user
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       201:
+ *         description: The created user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ */
 app.post("/", (req, res) => {
   try {
     const newUser = req.body;
@@ -50,11 +132,38 @@ app.post("/", (req, res) => {
     res.status(201).json(users);
     writeLog("create", "post", 201);
   } catch (e) {
-    writeLog("ERROR", 500, e);
+    writeLog("ERROR", "post", 500, e.message);
+    res.status(500).send("Internal Server Error");
   }
 });
 
-//update
+/**
+ * @swagger
+ * /{id}:
+ *   put:
+ *     summary: Update a user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/User'
+ *     responses:
+ *       200:
+ *         description: The updated user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ */
 app.put("/:id", (req, res) => {
   try {
     const { id } = req.params;
@@ -68,25 +177,43 @@ app.put("/:id", (req, res) => {
     res.json(users);
     writeLog("update", "put", 200);
   } catch (e) {
-    writeLog("ERROR", 500, e);
+    writeLog("ERROR", "put", 500, e.message);
+    res.status(500).send("Internal Server Error");
   }
 });
 
-//delete
+/**
+ * @swagger
+ * /{id}:
+ *   delete:
+ *     summary: Delete a user
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The user ID
+ *     responses:
+ *       204:
+ *         description: The deleted user
+ */
 app.delete("/:id", (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     let users = readData();
     users = users.filter((user) => user.id !== Number(id));
     writeData(users);
     res.status(204).json(users);
     writeLog("delete", "delete", 204);
   } catch (e) {
-    writeLog("ERROR", 500, e);
+    writeLog("ERROR", "delete", 500, e.message);
+    res.status(500).send("Internal Server Error");
   }
 });
 
 const port = 3000;
 app.listen(port, () => {
-  console.log(`Server runnig on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
