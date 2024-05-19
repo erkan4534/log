@@ -53,6 +53,26 @@ const writeLog = (...logInfo) => {
   console.log(log);
 };
 
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Retrieve a list of users
+ *     responses:
+ *       200:
+ *         description: A list of users.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ */
 app.get("/", (req, res) => {
   try {
     const data = readData();
@@ -64,6 +84,37 @@ app.get("/", (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /:
+ *   post:
+ *     summary: Create a new user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               name:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: The created user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ */
 app.post("/", (req, res) => {
   try {
     const newUser = req.body;
@@ -78,6 +129,42 @@ app.post("/", (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /{id}:
+ *   put:
+ *     summary: Update an existing user
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the user to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: The updated user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   name:
+ *                     type: string
+ */
 app.put("/:id", (req, res) => {
   try {
     const { id } = req.params;
@@ -96,6 +183,22 @@ app.put("/:id", (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /{id}:
+ *   delete:
+ *     summary: Delete a user
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: integer
+ *         required: true
+ *         description: The ID of the user to delete
+ *     responses:
+ *       204:
+ *         description: No content.
+ */
 app.delete("/:id", (req, res) => {
   try {
     const { id } = req.params;
