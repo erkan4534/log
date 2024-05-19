@@ -17,7 +17,7 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:3000",
+        url: "https://log-omega-tawny.vercel.app",
       },
     ],
   },
