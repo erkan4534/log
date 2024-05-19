@@ -1,10 +1,11 @@
 const express = require("express");
 const fs = require("fs");
-const app = express();
+const path = require("path");
 const swaggerUi = require("swagger-ui-express");
 const swaggerJsdoc = require("swagger-jsdoc");
 
-app.use(express.json()); // Gelen JSON verilerini parse eder
+const app = express();
+app.use(express.json());
 
 const options = {
   definition: {
@@ -20,34 +21,36 @@ const options = {
       },
     ],
   },
-  apis: ["./server.js"], // Swagger dokümantasyonu oluşturulacak dosyaların yolu
+  apis: [path.join(__dirname, "server.js")],
 };
 
 const specs = swaggerJsdoc(options);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
-const filePath = "data.json";
+const filePath = path.join(__dirname, "data.json");
 
 const readData = () => {
-  const jsonData = fs.readFileSync(filePath);
-  return JSON.parse(jsonData);
+  try {
+    const jsonData = fs.readFileSync(filePath);
+    return JSON.parse(jsonData);
+  } catch (error) {
+    console.error("Error reading data:", error);
+    return [];
+  }
 };
 
 const writeData = (users) => {
-  fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
+  try {
+    fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
+  } catch (error) {
+    console.error("Error writing data:", error);
+  }
 };
 
 const writeLog = (...logInfo) => {
   const now = new Date().toLocaleString().replace(",", "");
-  const log = `${logInfo[0]},${logInfo[1]},${logInfo[2]},${now}${"\n"}`;
-
-  fs.appendFile("./log.txt", log, (err) => {
-    if (err) {
-      console.log("Dosya işleminde bir hata oluştu:", err);
-    } else {
-      console.log("Dosya işlemi başarılı!");
-    }
-  });
+  const log = `${logInfo[0]},${logInfo[1]},${logInfo[2]},${now}`;
+  console.log(log);
 };
 
 /**
@@ -213,7 +216,7 @@ app.delete("/:id", (req, res) => {
   }
 });
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
