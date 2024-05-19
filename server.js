@@ -53,48 +53,6 @@ const writeLog = (...logInfo) => {
   console.log(log);
 };
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     User:
- *       type: object
- *       required:
- *         - id
- *         - name
- *         - email
- *       properties:
- *         id:
- *           type: integer
- *         name:
- *           type: string
- *         email:
- *           type: string
- */
-
-/**
- * @swagger
- * tags:
- *   name: Users
- *   description: The users managing API
- */
-
-/**
- * @swagger
- * /:
- *   get:
- *     summary: Retrieve a list of users
- *     tags: [Users]
- *     responses:
- *       200:
- *         description: A list of users
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/User'
- */
 app.get("/", (req, res) => {
   try {
     const data = readData();
@@ -106,26 +64,6 @@ app.get("/", (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /:
- *   post:
- *     summary: Create a new user
- *     tags: [Users]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       201:
- *         description: The created user
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- */
 app.post("/", (req, res) => {
   try {
     const newUser = req.body;
@@ -140,33 +78,6 @@ app.post("/", (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /{id}:
- *   put:
- *     summary: Update a user
- *     tags: [Users]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: integer
- *         required: true
- *         description: The user ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/User'
- *     responses:
- *       200:
- *         description: The updated user
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/User'
- */
 app.put("/:id", (req, res) => {
   try {
     const { id } = req.params;
@@ -185,23 +96,6 @@ app.put("/:id", (req, res) => {
   }
 });
 
-/**
- * @swagger
- * /{id}:
- *   delete:
- *     summary: Delete a user
- *     tags: [Users]
- *     parameters:
- *       - in: path
- *         name: id
- *         schema:
- *           type: integer
- *         required: true
- *         description: The user ID
- *     responses:
- *       204:
- *         description: The deleted user
- */
 app.delete("/:id", (req, res) => {
   try {
     const { id } = req.params;
